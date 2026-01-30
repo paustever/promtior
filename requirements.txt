@@ -7,4 +7,5 @@ pydantic
 langchain-community
 chromadb
 pypdf
+beautifulsoup4
 

@@ -1,4 +1,8 @@
 langchain
 langchain-ollama
 langchain-chroma
-pandas
+fastapi
+uvicorn
+pydantic
+langchain-community
+chromadb

@@ -1,16 +1,16 @@
-# Ignorar el entorno virtual
-venv/
-.venv/
-
-# Ignorar archivos de entorno
-.env
-
-# Ignorar caches de Python
+# Python
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-
-# Ignorar bases de datos locales o logs
 *.sqlite3
-*.log
+
+# Virtual environment
+venv/
+
+# Chroma local DB
+chroma_db/
+
+# OS files
+.DS_Store
+Thumbs.db

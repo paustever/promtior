@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 from langchain_community.document_loaders import WebBaseLoader, PyPDFLoader
-from langchain_ollama import OllamaEmbeddings, OllamaLLM
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import ChatPromptTemplate
@@ -13,6 +13,9 @@ import threading
 os.environ["USER_AGENT"] = "promtiortest"
 
 app = FastAPI(title="Promtior RAG Chatbot", version="1.0")
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("No se encontró la API key. Poné OPENAI_API_KEY en tu entorno")
 
 # --- Request model ---
 class QuestionRequest(BaseModel):
@@ -65,7 +68,7 @@ def initialize_vectorstore():
     print(f"Total chunks after split: {len(splits)}")
 
     # --- Create embeddings and vectorstore ---
-    embeddings = OllamaEmbeddings(model="llama3")
+    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
     CHROMA_DIR = "./chroma_db"
 
     if os.path.exists(CHROMA_DIR):
@@ -86,10 +89,16 @@ def initialize_vectorstore():
     retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
 
     # --- LLM & prompt ---
-    llm = OllamaLLM(model="llama3")
+    llm = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0
+)
     prompt = ChatPromptTemplate.from_template("""
 You are an assistant that answers questions ONLY using the context provided.
 You are an assistant answering questions about Promtior which is a company.
+Answer in a natural, friendly, and professional way.
+Do not return bullet lists unless the user asks for them.
+Write like you are explaining to a client.
 Do NOT generate any information that is not explicitly or clearly inferable from the context.
 When the answer mentions the company it means promtior.
 Do NOT make assumptions, guesses, or use prior knowledge outside of the provided documents.
@@ -101,9 +110,7 @@ Instructions:
 - Only use the content from the documents provided.
 - If the context does not contain enough information to answer, respond with: "I don't know."
 - Do NOT invent dates, numbers, or services that are not in the documents.
-- Treat synonyms or translations as equivalent (for example: "fundada" = "founded").
-- Treat synonyms and translations as equivalent, for example:
-- "the company" = "Promtior"
+- Treat synonyms or translations as equivalent 
 - Answer concisely and clearly.
 
 Context:{context}

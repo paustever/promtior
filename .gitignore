@@ -1,16 +1,6 @@
-# Python
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.sqlite3
-
-# Virtual environment
 venv/
-
-# Chroma local DB
+__pycache__/
 chroma_db/
+*.pyc
+.env
 
-# OS files
-.DS_Store
-Thumbs.db

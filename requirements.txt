@@ -1,5 +1,4 @@
 langchain
-langchain-ollama
 langchain-chroma
 fastapi
 uvicorn
@@ -9,3 +8,5 @@ chromadb
 pypdf
 beautifulsoup4
 requests
+fastapi
+langchain-openai

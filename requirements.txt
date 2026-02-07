@@ -10,3 +10,4 @@ beautifulsoup4
 requests
 fastapi
 langchain-openai
+tiktoken

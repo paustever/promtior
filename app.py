@@ -9,6 +9,11 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 import threading
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+
+
 
 os.environ["USER_AGENT"] = "promtiortest"
 
@@ -154,3 +159,8 @@ def ask_question(q: QuestionRequest):
 @app.get("/")
 def root():
     return {"message": "Promtior RAG Chatbot API is running. Use /ask to ask questions."}
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/chat")
+def chat():
+    return FileResponse("static/index.html")

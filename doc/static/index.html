@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Promtior RAG Chatbot</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.chat {
+  width: 600px;
+  background: #020617;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 40px rgba(0,0,0,.4);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.messages {
+  height: 400px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+.msg {
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin: 8px 0;
+  max-width: 80%;
+}
+
+.user {
+  background: #2563eb;
+  margin-left: auto;
+}
+
+.bot {
+  background: #1e293b;
+}
+
+input {
+  width: 80%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: #22c55e;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat">
+  <h1>Promtior Chatbot</h1>
+  <div class="messages" id="messages"></div>
+
+  <input id="q" placeholder="Ask about Promtior..." />
+  <button onclick="send()">Send</button>
+</div>
+
+<script>
+async function send() {
+  const input = document.getElementById("q");
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMsg(text, "user");
+  input.value = "";
+
+  addMsg("Thinking...", "bot");
+
+  const res = await fetch("/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: text })
+  });
+
+  const data = await res.json();
+
+  document.querySelector(".messages").lastChild.remove();
+  addMsg(data.answer.content || data.answer, "bot");
+}
+
+function addMsg(text, type) {
+  const div = document.createElement("div");
+  div.className = "msg " + type;
+  div.innerText = text;
+  document.getElementById("messages").appendChild(div);
+}
+</script>
+
+</body>
+</html>
